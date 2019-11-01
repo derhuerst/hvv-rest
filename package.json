@@ -1,0 +1,35 @@
+{
+	"private": true,
+	"name": "hvv-rest",
+	"description": "An HTTP API for Hamburg public transport.",
+	"version": "1.0.0",
+	"main": "index.js",
+	"keywords": [
+		"public",
+		"transport",
+		"api",
+		"hvv",
+		"berlin",
+		"http",
+		"rest"
+	],
+	"author": "Jannis R <mail@jannisr.de>",
+	"homepage": "https://github.com/derhuerst/hvv-rest/tree/2",
+	"repository": "derhuerst/hvv-rest",
+	"bugs": "https://github.com/derhuerst/hvv-rest/issues",
+	"license": "ISC",
+	"engines": {
+		"node": ">=8"
+	},
+	"dependencies": {
+		"hafas-client": "^4.6.1",
+		"hafas-client-health-check": "^1.0.1",
+		"hafas-rest-api": "^2.1.2"
+	},
+	"scripts": {
+		"start": "node index.js"
+	},
+	"devDependencies": {
+		"pino-pretty": "^2.5.0"
+	}
+}
