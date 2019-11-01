@@ -1,4 +1,4 @@
-# Berlin & Brandenburg Public Transport API
+# Hamburg Public Transport API
 
 This API returns data in the [*Friendly Public Transport Format* `1.2.1`](https://github.com/public-transport/friendly-public-transport-format/blob/1.2.1/spec/readme.md). The public endpoint is [`1.hvv.transport.rest`](`https://1.hvv.transport.rest/`).
 
@@ -113,13 +113,7 @@ Output from [`hafas.journeys(…)`](https://github.com/public-transport/hafas-cl
 - `startWithWalking`: Consider walking to nearby stations at the beginning of a journey? Default: `true`.
 - `language`: Language of the results. Default: `en`.
 
-- `suburban`: Include [S-Bahn trains](https://en.wikipedia.org/wiki/Berlin_S-Bahn)? Default: `true`.
-- `subway`: Include [U-Bahn trains](https://en.wikipedia.org/wiki/Berlin_U-Bahn)? Default: `true`.
-- `tram`: Include [trams](https://en.wikipedia.org/wiki/Trams_in_Berlin)? Default: `true`.
-- `bus`: Include [buses](https://en.wikipedia.org/wiki/Bus_transport_in_Berlin)? Default: `true`.
-- `ferry`: Include [ferries](https://en.wikipedia.org/wiki/Ferry_transport_in_Berlin)? Default: `true`.
-- `express`: Include [IC/ICE/EC trains](https://en.wikipedia.org/wiki/High-speed_rail_in_Germany)? Default: `true`.
-- `regional`: Include [RE/RB/ODEG trains](https://de.wikipedia.org/wiki/Liste_der_Eisenbahnlinien_in_Brandenburg_und_Berlin#Regionalverkehr)? Default: `true`.
+todo: products
 
 `Content-Type`: `application/json`
 
@@ -188,7 +182,7 @@ Output from [`hafas.locations(…)`](https://github.com/public-transport/hafas-c
 
 ```shell
 curl 'https://1.hvv.transport.rest/locations?query=Dammtor'
-curl 'https://1.hvv.transport.rest/locations?query=Hermannstra%C3%9Fe%2016%2C%20Berlin&poi=false&stations=false'
+curl 'https://1.hvv.transport.rest/locations?query=Hermannstra%C3%9Fe%2016%2C%20Hamburg&poi=false&stations=false'
 ```
 
 
