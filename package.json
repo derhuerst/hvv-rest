@@ -19,17 +19,17 @@
 	"bugs": "https://github.com/derhuerst/hvv-rest/issues",
 	"license": "ISC",
 	"engines": {
-		"node": ">=8"
+		"node": ">=10"
 	},
 	"dependencies": {
-		"hafas-client": "^4.6.1",
-		"hafas-client-health-check": "^1.0.1",
-		"hafas-rest-api": "^2.1.2"
+		"hafas-client": "^5.5.0",
+		"hafas-client-health-check": "^2.1.1",
+		"hafas-rest-api": "^3.1.0"
 	},
 	"scripts": {
 		"start": "node index.js"
 	},
 	"devDependencies": {
-		"pino-pretty": "^2.5.0"
+		"pino-pretty": "^4.0.0"
 	}
 }
