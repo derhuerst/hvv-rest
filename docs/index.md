@@ -1,6 +1,6 @@
 # Hamburg Public Transport API
 
-This API returns data in the [*Friendly Public Transport Format* `1.2.1`](https://github.com/public-transport/friendly-public-transport-format/blob/1.2.1/spec/readme.md). The public endpoint is [`1.hvv.transport.rest`](`https://1.hvv.transport.rest/`).
+This API returns data in the [*Friendly Public Transport Format* `1.2.1`](https://github.com/public-transport/friendly-public-transport-format/blob/1.2.1/spec/readme.md). The public endpoint is [`1.hvv.transport.rest`](https://1.hvv.transport.rest/).
 
 ## all routes
 

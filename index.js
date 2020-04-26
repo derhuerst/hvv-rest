@@ -15,7 +15,7 @@ const docsAsMarkdown = readFileSync(join(__dirname, 'docs', 'index.md'), {encodi
 const hafas = createHafas(hvvProfile, 'hvv-rest')
 
 const config = {
-	hostname: process.env.HOSTNAME || '1.hvv.transport.rest',
+	hostname: process.env.HOSTNAME || 'localhost',
 	port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
 	name: pkg.name,
 	description: pkg.description,
