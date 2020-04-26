@@ -1,6 +1,6 @@
 # Hamburg Public Transport API
 
-This API returns data in the [*Friendly Public Transport Format* `1.2.1`](https://github.com/public-transport/friendly-public-transport-format/blob/1.2.1/spec/readme.md). The public endpoint is [`1.hvv.transport.rest`](https://1.hvv.transport.rest/).
+This API returns data in the [*Friendly Public Transport Format* `1.2.1`](https://github.com/public-transport/friendly-public-transport-format/blob/1.2.1/spec/readme.md). The public endpoint is [`v5.hvv.transport.rest`](https://v5.hvv.transport.rest/).
 
 ## all routes
 
@@ -29,7 +29,7 @@ This API returns data in the [*Friendly Public Transport Format* `1.2.1`](https:
 ### examples
 
 ```shell
-curl 'https://1.hvv.transport.rest/stops/nearby?latitude=53.55118&longitude=9.99468'
+curl 'https://v5.hvv.transport.rest/stops/nearby?latitude=53.55118&longitude=9.99468'
 ```
 
 
@@ -43,7 +43,7 @@ curl 'https://1.hvv.transport.rest/stops/nearby?latitude=53.55118&longitude=9.99
 ### examples
 
 ```shell
-curl 'https://1.hvv.transport.rest/stops/163'
+curl 'https://v5.hvv.transport.rest/stops/163'
 ```
 
 
@@ -67,9 +67,9 @@ Returns departures at a stop/station.
 
 ```shell
 # at Dammtor (Messe/CCH), in direction Universität/Staatsbibliothek
-curl 'https://1.hvv.transport.rest/stations/163/departures?direction=8868&duration=10'
+curl 'https://v5.hvv.transport.rest/stations/163/departures?direction=8868&duration=10'
 # at Dammtor (Messe/CCH), without direction
-curl 'https://1.hvv.transport.rest/stations/163/departures?when=tomorrow%206pm'
+curl 'https://v5.hvv.transport.rest/stations/163/departures?when=tomorrow%206pm'
 ```
 
 
@@ -120,9 +120,9 @@ todo: products
 ### examples
 
 ```shell
-curl 'https://1.hvv.transport.rest/journeys?from=163&to=111'
-curl 'https://1.hvv.transport.rest/journeys?from=163&to.id=980001822&to.name=Hamburger%20Kunsthalle&to.latitude=53.55525&to.longitude=10.003052'
-curl 'https://1.hvv.transport.rest/journeys?from=…&to=…&results=3&bus=false&tickets=true'
+curl 'https://v5.hvv.transport.rest/journeys?from=163&to=111'
+curl 'https://v5.hvv.transport.rest/journeys?from=163&to.id=980001822&to.name=Hamburger%20Kunsthalle&to.latitude=53.55525&to.longitude=10.003052'
+curl 'https://v5.hvv.transport.rest/journeys?from=…&to=…&results=3&bus=false&tickets=true'
 ```
 
 
@@ -140,7 +140,7 @@ Output from [`hafas.refreshJourney(…)`](https://github.com/public-transport/ha
 ### examples
 
 ```shell
-curl 'https://1.hvv.transport.rest/journeys/T%24A%3D1%40O%3DDammtor%20(Messe%2FCCH)%40L%3D20501%40a%3D128%40%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D20677%40a%3D128%40%24201911011725%24201911011727%24%20%20%20%20%20S11%24%243%24%C2%A7W%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D20677%40a%3D128%40%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D16444%40a%3D128%40%24201911011742%24201911011745%24%24%241%24%C2%A7T%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D16444%40a%3D128%40%24A%3D1%40O%3DFeldstra%C3%9Fe%20(Heiligengeistfeld)%40L%3D16311%40a%3D128%40%24201911011746%24201911011748%24%20%20%20%20%20%20U3%24%241%24'
+curl 'https://v5.hvv.transport.rest/journeys/T%24A%3D1%40O%3DDammtor%20(Messe%2FCCH)%40L%3D20501%40a%3D128%40%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D20677%40a%3D128%40%24201911011725%24201911011727%24%20%20%20%20%20S11%24%243%24%C2%A7W%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D20677%40a%3D128%40%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D16444%40a%3D128%40%24201911011742%24201911011745%24%24%241%24%C2%A7T%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D16444%40a%3D128%40%24A%3D1%40O%3DFeldstra%C3%9Fe%20(Heiligengeistfeld)%40L%3D16311%40a%3D128%40%24201911011746%24201911011748%24%20%20%20%20%20%20U3%24%241%24'
 ```
 
 
@@ -159,7 +159,7 @@ Output from [`hafas.trip(…)`](https://github.com/public-transport/hafas-client
 ### examples
 
 ```shell
-curl 'https://1.hvv.transport.rest/trips/1|34306|0|80|1112019?lineName=S31'
+curl 'https://v5.hvv.transport.rest/trips/1|34306|0|80|1112019?lineName=S31'
 ```
 
 
@@ -181,8 +181,8 @@ Output from [`hafas.locations(…)`](https://github.com/public-transport/hafas-c
 ### examples
 
 ```shell
-curl 'https://1.hvv.transport.rest/locations?query=Dammtor'
-curl 'https://1.hvv.transport.rest/locations?query=Hermannstra%C3%9Fe%2016%2C%20Hamburg&poi=false&stations=false'
+curl 'https://v5.hvv.transport.rest/locations?query=Dammtor'
+curl 'https://v5.hvv.transport.rest/locations?query=Hermannstra%C3%9Fe%2016%2C%20Hamburg&poi=false&stations=false'
 ```
 
 
@@ -203,5 +203,5 @@ curl 'https://1.hvv.transport.rest/locations?query=Hermannstra%C3%9Fe%2016%2C%20
 ### examples
 
 ```shell
-curl 'https://1.hvv.transport.rest/radar?north=53.555&west=9.989&south=53.55&east=10.001'
+curl 'https://v5.hvv.transport.rest/radar?north=53.555&west=9.989&south=53.55&east=10.001'
 ```

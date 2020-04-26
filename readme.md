@@ -1,6 +1,6 @@
 # hvv-rest
 
-***hvv-rest* is a public transport REST API**, a clean alternative to the [HVV HAFAS API](https://github.com/public-transport/hafas-client/tree/df943252b69e07a9739600ef409a65e2941cd1c9/p/hvv/readme.md).
+***hvv-rest* is a public transport REST API**, a clean alternative to the [HVV HAFAS API](https://github.com/public-transport/hafas-client/blob/e02a20b1de59bda3cd380445b6105e4c46036636/p/hvv/readme.md). It is deployed at [`v5.hvv.transport.rest`](https://v5.hvv.transport.rest/).
 
 [API Documentation](docs/index.md) | [Why?](docs/why.md)
 
@@ -16,10 +16,10 @@
 
 ### via Docker
 
-A Docker image [is available as `derhuerst/hvv-rest`](https://hub.docker.com/r/derhuerst/hvv-rest).
+A Docker image [is available as `derhuerst/hvv-rest:5`](https://hub.docker.com/r/derhuerst/hvv-rest).
 
 ```shell
-docker run -d -p 3000:3000 derhuerst/hvv-rest
+docker run -d -p 3000:3000 derhuerst/hvv-rest:5
 ```
 
 ### manually
@@ -27,7 +27,7 @@ docker run -d -p 3000:3000 derhuerst/hvv-rest
 ```shell
 git clone https://github.com/derhuerst/hvv-rest.git
 cd hvv-rest
-git checkout 2
+git checkout 5
 npm install --production
 npm start
 ```
