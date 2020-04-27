@@ -33,6 +33,7 @@ const config = {
 	docsLink: 'https://github.com/derhuerst/hvv-rest/blob/5/docs/readme.md',
 	logging: true,
 	aboutPage: true,
+	etags: 'strong',
 	healthCheck: async () => (
 		(await checkHafas()) === true &&
 		(await checkRedis()) === true
