@@ -1,7 +1,5 @@
 'use strict'
 
-const {readFileSync} = require('fs')
-const {join} = require('path')
 const createHafas = require('hafas-client')
 const hvvProfile = require('hafas-client/p/hvv')
 const createApi = require('hafas-rest-api')
@@ -9,8 +7,6 @@ const createHealthCheck = require('hafas-client-health-check')
 const pkg = require('./package.json')
 
 const hamburgHarburg = '3204'
-
-const docsAsMarkdown = readFileSync(join(__dirname, 'docs', 'index.md'), {encoding: 'utf8'})
 
 const hafas = createHafas(hvvProfile, 'hvv-rest')
 
@@ -21,10 +17,9 @@ const config = {
 	description: pkg.description,
 	version: pkg.version,
 	homepage: pkg.homepage,
-	docsLink: '/docs',
+	docsLink: 'https://github.com/derhuerst/hvv-rest/blob/5/docs/readme.md',
 	logging: true,
 	aboutPage: true,
-	docsAsMarkdown,
 	healthCheck: createHealthCheck(hafas, hamburgHarburg)
 }
 

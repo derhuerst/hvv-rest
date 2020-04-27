@@ -1,207 +1,419 @@
-# Hamburg Public Transport API
+# `v5.hvv.transport.rest` API documentation
 
-This API returns data in the [*Friendly Public Transport Format* `1.2.1`](https://github.com/public-transport/friendly-public-transport-format/blob/1.2.1/spec/readme.md). The public endpoint is [`v5.hvv.transport.rest`](https://v5.hvv.transport.rest/).
+[`v5.hvv.transport.rest`](https://v5.hvv.transport.rest/) is a [REST API](https://restfulapi.net). Data is being returned as [JSON](https://www.json.org/).
 
-## all routes
+You can just use the API without authentication. In the future, we may [rate-limit](https://apisyouwonthate.com/blog/what-is-api-rate-limiting-all-about) your IP address if you make too many requests.
 
+*Note:* For [URL-encoding](https://de.wikipedia.org/wiki/URL-Encoding), this documentation uses the `url-encode` tool of the [`url-decode-encode-cli` package](https://www.npmjs.com/package/url-decode-encode-cli).
+
+## Routes
+
+*Note:* These routes only wrap [`hafas-client@5` methods](https://github.com/public-transport/hafas-client/blob/5/docs/readme.md), check their docs for more details.
+
+- [`GET /locations`](#get-locations)
 - [`GET /stops/nearby`](#get-stopsnearby)
+- [`GET /stops/reachable-from`](#get-stopsreachable-from)
 - [`GET /stops/:id`](#get-stopsid)
-- [`GET /stations/:id/departures`](#get-stationssiddepartures)
+- [`GET /stops/:id/departures`](#get-stopsiddepartures)
+- [`GET /stops/:id/arrivals`](#get-stopsidarrivals)
 - [`GET /journeys`](#get-journeys)
 - [`GET /journeys/:ref`](#get-journeysref)
 - [`GET /trips/:id`](#get-tripsid)
-- [`GET /locations`](#get-locations)
 - [`GET /radar`](#get-radar)
+- [date/time parameters](#datetime-parameters)
+- [product parameters](#product-parameters)
+
+
+## `GET /locations`
+
+Uses [`hafasClient.locations()`](https://github.com/public-transport/hafas-client/blob/5/docs/locations.md) to **find stops/stations, POIs and addresses matching `query`**.
+
+name | description | type | default value
+-----|-------------|------|--------------
+`query` | **Required.** | string | –
+`fuzzy` | Find only exact matches? | boolean | `true`
+`results` | How many stations shall be shown? | boolean | `10`
+`stops` | Show stops/stations? | boolean | `true`
+`poi` | Show points of interest? | boolean | `true`
+`addresses` | Show addresses? | boolean | `true`
+`linesOfStops` | Parse & return lines of each stop/station? | boolean | `false`
+`language` | Language of the results. | string | `en`
+
+### Example
+
+```shell
+curl 'https://v5.hvv.transport.rest/locations?query=dammtor&results=1' -s | jq
+```
+
+```js
+[
+	{
+		"type": "stop",
+		"id": "163",
+		"name": "Dammtor (Messe/CCH)",
+		"location": {
+			"type": "location",
+			"latitude": 53.560949,
+			"longitude": 9.989721
+		},
+		"products": {
+			"subway": false,
+			"suburban": true,
+			"akn": false,
+			// …
+		}
+	}
+]
+```
+
 
 ## `GET /stops/nearby`
 
-- `latitude`: **Required.**
-- `longitude`: **Required.**
-- `results`: How many stops/stations shall be shown? Default: `8`.
-- `distance`: Maximum distance in meters. Default: `null`.
-- `stops`: Show stops/stations around. Default: `true`.
-- `poi`: Show points of interest around. Default: `false`.
-- `linesOfStops`: Parse & expose lines of each stop/station? Default: `false`.
-- `language`: Language of the results. Default: `en`.
+Uses [`hafasClient.nearby()`](https://github.com/public-transport/hafas-client/blob/5/docs/nearby.md) to **find stops/stations close to the given geolocation**.
 
-`Content-Type`: `application/json`
+name | description | type | default value
+-----|-------------|------|--------------
+`latitude` | **Required.** | number | –
+`longitude` | **Required.** | number | –
+`results` | maximum number of results | number | `8`
+`distance` | maximum walking distance in meters | number | –
+`poi` | return points of interest? | boolean | `false`
+`stops` | return stops/stations? | boolean | `true`
+`linesOfStops` | parse & expose lines at each stop/station? | boolean | `false`
+`language` | language to get results in | string | `en`
 
-### examples
+### Example
 
 ```shell
-curl 'https://v5.hvv.transport.rest/stops/nearby?latitude=53.55118&longitude=9.99468'
+curl 'https://v5.hvv.transport.rest/stops/nearby?latitude=53.5711&longitude=10.0015' -s | jq
+```
+
+```js
+[
+	{
+		"type": "stop",
+		"id": "118",
+		"name": "Böttgerstraße",
+		"location": {
+			"type": "location",
+			"latitude": 53.568356,
+			"longitude": 9.995528
+		},
+		"products": { /* … */ },
+		"distance": 498
+	},
+	// …
+	{
+		"type": "stop",
+		"id": "4673",
+		"name": "Gertigstraße",
+		"location": { /* … */ },
+		"products": { /* … */ },
+		"distance": 1305
+	},
+	// …
+]
+```
+
+
+## `GET /stops/reachable-from`
+
+Uses [`hafasClient.reachableFrom()`](https://github.com/public-transport/hafas-client/blob/5/docs/reachable-from.md) to **find stops/stations reachable within a certain time from an address**.
+
+name | description | type | default value
+-----|-------------|------|--------------
+`latitude` | **Required.** | number | –
+`longitude` | **Required.** | number | –
+`address` | **Required.** | string | –
+`when` | Date & time to compute the reachability for. See [date/time parameters](#datetime-parameters). | | *now*
+`maxTransfers` | Maximum number of transfers. | number | `5`
+`maxDuration` | Maximum travel duration, in minutes. | number | *infinite*
+[product parameters](#product-parameters) | Compute time to reach a stop/station only using certain products. | booleans | *all products*
+`language` | language to get results in | string | `en`
+
+### Example
+
+```shell
+curl 'https://v5.hvv.transport.rest/stops/reachable-from?latitude=53.553766&longitude=9.977514&address=Hamburg,+Holstenwall+9' -s | jq
+```
+
+```js
+[
+	{
+		"type": "stop",
+		"id": "102",
+		"name": "Handwerkskammer",
+		"location": {
+			"type": "location",
+			"id": "102",
+			"latitude": 53.553371,
+			"longitude": 9.976723
+		},
+		"products": { /* … */ },
+		"distance": 68
+	},
+	// …
+	{
+		"type": "stop",
+		"id": "6255",
+		"name": "Altona (Fischmarkt)",
+		"location": { /* … */ },
+		"products": { /* … */ },
+		"distance": 1996
+	},
+	// …
+]
 ```
 
 
 ## `GET /stops/:id`
 
-`Content-Type`: `application/json`
+Uses [`hafasClient.stop()`](https://github.com/public-transport/hafas-client/blob/5/docs/stop.md) to **find a stop/station by ID**.
 
-- `linesOfStops`: Parse & expose lines of the stop/station? Default: `false`.
-- `language`: Language of the results. Default: `en`.
+name | description | type | default value
+-----|-------------|------|--------------
+`linesOfStops` | parse & expose lines at each stop/station? | boolean | `false`
+`language` | language to get results in | string | `en`
 
-### examples
+### Example
 
 ```shell
-curl 'https://v5.hvv.transport.rest/stops/163'
+curl 'https://v5.hvv.transport.rest/stops/163' -s | jq
+```
+
+```js
+{
+	"type": "stop",
+	"id": "163",
+	"name": "Dammtor (Messe/CCH)",
+	"location": {
+		"type": "location",
+		"id": "163",
+		"latitude": 53.560949,
+		"longitude": 9.989721
+	},
+	"products": { /* … */ },
+}
 ```
 
 
-## `GET /stations/:id/departures`
+## `GET /stops/:id/departures`
 
-Returns departures at a stop/station.
+Uses [`hafasClient.departures()`](https://github.com/public-transport/hafas-client/blob/5/docs/departures.md) to **get departures at a stop/station**.
 
-*Note:* As stated in the [*Friendly Public Transport Format* `1.2.1`](https://github.com/public-transport/friendly-public-transport-format/blob/1.2.1/spec/readme.md), the returned `departure` and `arrival` times include the current delay.
+name | description | type | default value
+-----|-------------|------|--------------
+`when` | Date & time to get departures for. See [date/time parameters](#datetime-parameters). | | *now*
+`direction` | Filter departures by direction. | string | –
+`duration` | Show departures for how many minutes? | number | `10`
+`results` | Max. number of departures. | number | *whatever HAFAS wants*
+`linesOfStops` | Parse & return lines of each stop/station? | boolean | `false`
+`remarks` | Parse & return hints & warnings? | boolean | `true`
+`stopovers` | Fetch & parse next stopovers of each departure? | boolean | `false`
+`includeRelatedStations` | Fetch departures at related stops, e.g. those that belong together on the metro map? | boolean | `true`
+`language` | Language of the results. | string | `en`
 
-`Content-Type`: `application/json`
-
-- `when`: A [UNIX timestamp](https://en.wikipedia.org/wiki/Unix_time) or anything parsable by [`parse-messy-time`](https://github.com/substack/parse-messy-time#example). Default: now.
-- `direction`: Filter departures by direction. Default: `null`.
-- `duration`: Show departures for the next `n` minutes. Default: `10`.
-- `linesOfStops`: Parse & expose lines of each stop/station? Default: `false`.
-- `remarks`: Parse & expose hints & warnings? Default: `true`.
-- `includeRelatedStations`: Fetch departures at related stations, e.g. those that belong together on the metro map? Default: `true`.
-- `language`: Language of the results. Default: `en`.
-
-### examples
+### Example
 
 ```shell
-# at Dammtor (Messe/CCH), in direction Universität/Staatsbibliothek
-curl 'https://v5.hvv.transport.rest/stations/163/departures?direction=8868&duration=10'
-# at Dammtor (Messe/CCH), without direction
-curl 'https://v5.hvv.transport.rest/stations/163/departures?when=tomorrow%206pm'
+# at Dammtor (Messe/CCH), in direction Universität/Staatsbibliothek, 10 minutes
+curl 'https://v5.hvv.transport.rest/stops/163/departures?direction=8868&duration=10' -s | jq
+```
+
+```js
+[
+	{
+		"tripId": "1|8729|0|80|26042020",
+		"direction": "U Niendorf Markt",
+		"line": {
+			"type": "line",
+			"id": "hha-b-5",
+			"name": "5",
+			"mode": "bus",
+			"product": "bus",
+			// …
+		},
+
+		"when": "2020-04-26T23:03:00+02:00",
+		"plannedWhen": "2020-04-26T23:03:00+02:00",
+		"delay": 0,
+		"platform": null,
+		"plannedPlatform": null,
+
+		"stop": {
+			"type": "stop",
+			"id": "8862",
+			"name": "Bf. Dammtor",
+			"location": { /* … */ },
+			"products": { /* … */ },
+			// …
+		},
+
+		"remarks": [ /* … */ ],
+	},
+	// …
+]
+```
+
+
+## `GET /stops/:id/arrivals`
+
+Works like [`/stops/:id/departures`](#get-stopsiddepartures), except that it uses [`hafasClient.arrivals()`](https://github.com/public-transport/hafas-client/blob/5/docs/arrivals.md) to **arrivals at a stop/station**.
+
+### Example
+
+```shell
+# at Dammtor (Messe/CCH), 10 minutes
+curl 'https://v5.hvv.transport.rest/stops/163/arrivals?duration=10' -s | jq
 ```
 
 
 ## `GET /journeys`
 
-Output from [`hafas.journeys(…)`](https://github.com/public-transport/hafas-client/blob/4/docs/journeys.md). Start location and end location must be either in [stop format](#stop-format), [POI format](#poi-format) or [address format](#address-format) (you can mix them).
+Uses [`hafasClient.journeys()`](https://github.com/public-transport/hafas-client/blob/5/docs/journeys.md) to **find journeys from A (`from`) to B (`to`)**.
 
-*Note:* As stated in the [*Friendly Public Transport Format* `1.2.1`](https://github.com/public-transport/friendly-public-transport-format/blob/1.2.1/spec/readme.md), the returned `departure` and `arrival` times include the current delay.
+`from` (A), `to` (B), and the optional `via` must each have one of these formats:
 
-## stop format
+- as stop/station ID (e.g. `from=163` for *Dammtor (Messe/CCH)*)
+- as a POI (e.g. `from.id=980001141&from.latitude=53.5415&from.longitude=9.98576` for *Elbphilharmonie Besucherzentrum*)
+- as an address (e.g. `from.latitude=53.57422&from.longitude=10.01248&from.address=Hamburg,+Karlstraße+26` for *Karlstr. 26*)
 
-- `from`: **Required.** stop/station ID (e.g. `900000023201`).
-- `to`: **Required.** stop/station ID (e.g. `900000023201`).
+Other parameters:
 
-## POI format
+name | description | type | default value
+-----|-------------|------|--------------
+`departure`/`arrival` | Compute journeys departing/arriving at this date/time. Mutually exclusive. See [date/time parameters](#datetime-parameters). | | *now*
+`results` | Max. number of journeys. | number | `3`
+`stopovers` | Fetch & parse stopovers on the way? | boolean | `false`
+`transfers` | Maximum number of transfers. | number | *let HAFAS decide*
+`transferTime` | Minimum time in minutes for a single transfer. | number | `0`
+`accessibility` | `partial` or `complete`. | string | *not accessible*
+`bike` | Compute only bike-friendly journeys? | boolean | `false`
+`startWithWalking` | Consider walking to nearby stations at the beginning of a journey? | boolean | `true`
+`walkingSpeed` | `slow`, `normal` or `fast`. | string | `normal`
+[product parameters](#product-parameters) | Compute journeys using only certain products. | booleans | *all products*
+`tickets` | Return information about available tickets? | boolean | `false`
+`polylines` | Fetch & parse a shape for each journey leg? | boolean |  `false`
+`remarks` | Parse & return hints & warnings? | boolean | `true`
+`scheduledDays` | Parse & return dates each journey is valid on? | boolean | `false`
+`language` | Language of the results. | string | `en`
 
-- `from.latitude`/`to.latitude`: **Required.** Latitude (e.g. `52.543333`).
-- `from.longitude`/`to.longitude`: **Required.** Longitude (e.g. `13.351686`).
-- `from.name`/`to.name`: Name of the locality (e.g. `Atze Musiktheater`).
-- `from.id`/`to.id`: **Required.** POI ID (e.g. `9980720`).
+### Pagination
 
-## address format
+Given a response, you can also fetch more journeys matching the same criteria. Instead of `from*`, `to*` & `departure`/`arrival`, pass `earlierRef` from the first response as `earlierThan` to get journeys "before", or `laterRef` as `laterThan` to get journeys "after".
 
-- `from.latitude`/`to.latitude`: **Required.** Latitude (e.g. `52.543333`).
-- `from.longitude`/`to.longitude`: **Required.** Longitude (e.g. `13.351686`).
-- `from.address`/`to.address`: **Required.** Address (e.g. `Voltastr. 17`).
+Check the [`hafasClient.journeys()` docs](https://github.com/public-transport/hafas-client/blob/5/docs/journeys.md) for more details.
 
-## other parameters
-
-- `departure` or `arrival`: A [UNIX timestamp](https://en.wikipedia.org/wiki/Unix_time) or anything parsable by [`parse-messy-time`](https://github.com/substack/parse-messy-time#example). Default: now.
-- `results`: Maximum number of results. Default: `5`.
-- `via`: stop/station ID. Default: `null`.
-- `stopovers`: Return stops/stations on the way? Default: `false`.
-- `transfers`: Maximum number of transfers. Default: `null`.
-- `transferTime`: Minimum time in minutes for a single transfer. Default: `0`.
-- `accessibility`: Possible values: `partial`, `complete`. Default: `none`.
-- `bike`: Return only bike-friendly journeys. Default: `false`.
-- `tickets`: Return information about available tickets. Default: `false`.
-- `polylines`: Return shape of each journey leg? Default: `false`.
-- `remarks`: Parse & expose hints & warnings? Default: `true`.
-- `startWithWalking`: Consider walking to nearby stations at the beginning of a journey? Default: `true`.
-- `language`: Language of the results. Default: `en`.
-
-todo: products
-
-`Content-Type`: `application/json`
-
-### examples
+### Examples
 
 ```shell
-curl 'https://v5.hvv.transport.rest/journeys?from=163&to=111'
-curl 'https://v5.hvv.transport.rest/journeys?from=163&to.id=980001822&to.name=Hamburger%20Kunsthalle&to.latitude=53.55525&to.longitude=10.003052'
-curl 'https://v5.hvv.transport.rest/journeys?from=…&to=…&results=3&bus=false&tickets=true'
+# stop/station to POI
+curl 'https://v5.hvv.transport.rest/journeys?from=163&to.id=980001822&to.latitude=53.55525&to.longitude=10.00305' -s | jq
+# without buses, with ticket info
+curl 'https://v5.hvv.transport.rest/journeys?from=…&to=…&bus=false&tickets=true' -s | jq
 ```
 
 
 ## `GET /journeys/:ref`
 
-Output from [`hafas.refreshJourney(…)`](https://github.com/public-transport/hafas-client/blob/4/docs/refresh-journey.md).
+Uses [`hafasClient.refreshJourney()`](https://github.com/public-transport/hafas-client/blob/5/docs/refresh-journey.md) to **"refresh" a journey, using its `refreshToken`**.
 
-- `stopovers`: Return stations on the way? Default: `true`.
-- `polylines`: Return shape of each journey leg? Default: `false`.
-- `remarks`: Parse & expose hints & warnings? Default: `true`.
-- `language`: Language of the results. Default: `en`.
+The journey will be the same (equal `from`, `to`, `via`, date/time & vehicles used), but you can get up-to-date realtime data, like delays & cancellations.
 
-`Content-Type`: `application/json`
+name | description | type | default value
+-----|-------------|------|--------------
+`stopovers` | Fetch & parse stopovers on the way? | boolean | `false`
+`polylines` | Fetch & parse a shape for each journey leg? | boolean |  `false`
+`tickets` | Return information about available tickets? | boolean | `false`
+`remarks` | Parse & return hints & warnings? | boolean | `true`
+`language` | Language of the results. | string | `en`
 
-### examples
+### Example
 
 ```shell
-curl 'https://v5.hvv.transport.rest/journeys/T%24A%3D1%40O%3DDammtor%20(Messe%2FCCH)%40L%3D20501%40a%3D128%40%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D20677%40a%3D128%40%24201911011725%24201911011727%24%20%20%20%20%20S11%24%243%24%C2%A7W%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D20677%40a%3D128%40%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D16444%40a%3D128%40%24201911011742%24201911011745%24%24%241%24%C2%A7T%24A%3D1%40O%3DSternschanze%20(Messe)%40L%3D16444%40a%3D128%40%24A%3D1%40O%3DFeldstra%C3%9Fe%20(Heiligengeistfeld)%40L%3D16311%40a%3D128%40%24201911011746%24201911011748%24%20%20%20%20%20%20U3%24%241%24'
+# get the refreshToken of a journey
+journey=$(curl 'https://v5.hvv.transport.rest/journeys?from=…&to=…&results=1' -s | jq '.journeys[0]')
+refresh_token=$(echo $journey | jq -r '.refreshToken')
+
+# refresh the journey
+curl "https://v5.hvv.transport.rest/journeys/$(echo $refresh_token | url-encode)" -s | jq
 ```
 
 
 ## `GET /trips/:id`
 
-Output from [`hafas.trip(…)`](https://github.com/public-transport/hafas-client/blob/4/docs/trip.md).
+Uses [`hafasClient.trip()`](https://github.com/public-transport/hafas-client/blob/5/docs/trip.md) to **fetch a trip by ID**.
 
-- `lineName`: **Required.** Line name of the part's mode of transport, e.g. `RE7`.
-- `stopovers`: Return stations on the way? Default: `true`.
-- `remarks`: Parse & expose hints & warnings? Default: `true`.
-- `polyline`: Return a shape for the trip? Default: `false`.
-- `language`: Language of the results. Default: `en`.
+A trip is a specific vehicle, stopping at a series of stops at specific points in time. Departures, arrivals & journey legs reference trips by their ID.
 
-`Content-Type`: `application/json`
+name | description | type | default value
+-----|-------------|------|--------------
+`lineName` | **Required.** Line name of the part's mode of transport, e.g. `RE7`. | string | –
+`stopovers` | Fetch & parse stopovers on the way? | boolean | `true`
+`polyline` | Fetch & parse the geographic shape of the trip? | boolean |  `false`
+`remarks` | Parse & return hints & warnings? | boolean | `true`
+`language` | Language of the results. | string | `en`
 
-### examples
-
-```shell
-curl 'https://v5.hvv.transport.rest/trips/1|34306|0|80|1112019?lineName=S31'
-```
-
-
-## `GET /locations`
-
-Output from [`hafas.locations(…)`](https://github.com/public-transport/hafas-client/blob/4/docs/locations.md).
-
-- `query`: **Required.** (e.g. `Alexanderplatz`)
-- `fuzzy`: Find only exact matches? Default: `true`.
-- `results`: How many stations shall be shown? Default: `10`.
-- `stations`: Show stations? Default: `true`.
-- `poi`: Show points of interest? Default: `true`.
-- `addresses`: Show addresses? Default: `true`.
-- `linesOfStops`: Parse & expose lines of each station? Default: `false`.
-- `language`: Language of the results. Default: `en`.
-
-`Content-Type`: `application/json`
-
-### examples
+### Example
 
 ```shell
-curl 'https://v5.hvv.transport.rest/locations?query=Dammtor'
-curl 'https://v5.hvv.transport.rest/locations?query=Hermannstra%C3%9Fe%2016%2C%20Hamburg&poi=false&stations=false'
+# get the trip ID of a journey leg
+journey=$(curl 'https://v5.hvv.transport.rest/journeys?from=…&to=…&results=1' -s | jq '.journeys[0]')
+journey_leg=$(echo $journey | jq -r '.legs[0]')
+trip_id=$(echo $journey_leg | jq -r '.tripId')
+
+# fetch the trip
+curl "https://v5.hvv.transport.rest/trips/$(echo $trip_id | url-encode)" -s | jq
 ```
 
 
 ## `GET /radar`
 
-- `north`: **Required.** Northern latitude.
-- `west`: **Required.** Western longtidue.
-- `south`: **Required.** Southern latitude.
-- `east`: **Required.** Eastern longtidue.
-- `results`: How many vehicles shall be shown? Default: `256`.
-- `duration`: Compute frames for how many seconds? Default: `30`.
-- `frames`: Number of frames to compute. Default: `3`.
-- `polylines`: Return shape of movement? Default: `false`.
-- `language`: Language of the results. Default: `en`.
+Uses [`hafasClient.radar()`](https://github.com/public-transport/hafas-client/blob/5/docs/radar.md) to **find all vehicles currently in an area**, as well as their movements.
 
-`Content-Type`: `application/json`
+name | description | type | default value
+-----|-------------|------|--------------
+`north` | **Required.** Northern latitude. | number | –
+`west` | **Required.** Western longtidue. | number | –
+`south` | **Required.** Southern latitude. | number | –
+`east` | **Required.** Eastern longtidue. | number | –
+`results` | Max. number of vehicles. | number | `256`
+`duration` | Compute frames for the next `n` seconds. | number | `30`
+`frames` | Number of frames to compute. | number | `3`
+`polylines` | Fetch & parse a geographic shape for the movement of each vehicle? | boolean |  `true`
+`language` | Language of the results. | string | `en`
 
-### examples
+### Example
 
 ```shell
-curl 'https://v5.hvv.transport.rest/radar?north=53.555&west=9.989&south=53.55&east=10.001'
+bbox='north=53.555&west=9.989&south=53.55&east=10.001'
+curl "https://v5.hvv.transport.rest/radar?$bbox&results=10" -s | jq
 ```
+
+
+## Date/Time Parameters
+
+Possible formats:
+
+- anything that [`parse-human-relative-time`](https://npmjs.com/package/parse-human-relative-time) can parse (e.g. `tomorrow 2pm`)
+- [ISO 8601 date/time string](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations) (e.g. `2020-04-26T22:43+02:00`)
+- [UNIX timestamp](https://en.wikipedia.org/wiki/Unix_time) (e.g. `1587933780`)
+
+
+## Product Parameters
+
+Some routes allow you to filter by [product](https://github.com/public-transport/hafas-client/blob/e02a20b1de59bda3cd380445b6105e4c46036636/docs/writing-a-profile.md#3-products):
+
+name | description | type | default value
+-----|-------------|------|--------------
+`subway` | U-Bahn (U) | boolean | `true`
+`suburban` | S-Bahn (S) | boolean | `true`
+`akn` | AKN (A) | boolean | `true`
+`regional-express-train` | RegionalExpress (RE) | boolean | `true`
+`regional-train` | Regionalbahn (RB) | boolean | `true`
+`ferry` | Fähre (F) | boolean | `true`
+`bus` | Bus (Bus) | boolean | `true`
+`express-bus` | Schnellbus (Schnellbus) | boolean | `true`
+`anruf-sammel-taxi` | Anruf-Sammel-Taxi (AST) | boolean | `true`
+`long-distance-train` | Fernzug (ICE/IC/EC/EN) | boolean | `false`
+`long-distance-bus` | Fernbus (Fernbus) | boolean | `false`

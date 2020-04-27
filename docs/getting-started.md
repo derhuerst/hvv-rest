@@ -129,6 +129,8 @@ curl 'https://v5.hvv.transport.rest/stops/163/departures?results=5' -s | jq
 ]
 ```
 
+Note that `when` includes the `delay`, and `plannedWhen` does not.
+
 ### 3. fetch journeys from A to B
 
 We call a connection from A to B – at a specific date & time, made up of sections on specific *trips* – `journey`.
@@ -171,9 +173,9 @@ curl 'https://v5.hvv.transport.rest/journeys?from=163&to=6246&departure=tomorrow
 					"products": { /* … */ },
 				},
 			},
-			"departure": "2020-04-27T14:01:00+02:00",
+			"departure": "2020-04-27T14:03:00+02:00",
 			"plannedDeparture": "2020-04-27T14:01:00+02:00",
-			"departureDelay": null,
+			"departureDelay": 120,
 			"departurePlatform": "1",
 			"plannedDeparturePlatform": "1",
 
@@ -277,6 +279,8 @@ curl 'https://v5.hvv.transport.rest/journeys?from=163&to=6246&departure=tomorrow
 	// …
 }
 ```
+
+Note that `departure` includes the `departureDelay`, and `arrival` includes the `arrivalDelay`. `plannedDeparture` and `plannedArrival` do not.
 
 ### 4. more features
 
