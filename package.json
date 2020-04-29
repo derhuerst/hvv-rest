@@ -25,10 +25,12 @@
 		"cached-hafas-client": "^3.1.1",
 		"hafas-client": "^5.5.0",
 		"hafas-client-health-check": "^2.1.1",
-		"hafas-rest-api": "^3.1.0",
+		"hafas-rest-api": "^3.2.0",
 		"redis": "^3.0.2"
 	},
 	"scripts": {
+		"docs": "node api-docs.js >docs/api.md",
+		"build": "npm run docs",
 		"start": "node index.js"
 	},
 	"devDependencies": {
