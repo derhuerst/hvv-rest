@@ -1,6 +1,10 @@
 # hvv-rest
 
-***hvv-rest* is a public transport REST API**, a clean alternative to the [HVV HAFAS API](https://github.com/public-transport/hafas-client/tree/df943252b69e07a9739600ef409a65e2941cd1c9/p/hvv/readme.md).
+**Deprecated. Please use the [latest version](https://github.com/derhuerst/hvv-rest) of this API.**
+
+---
+
+*hvv-rest* is a public transport REST API, a clean alternative to the [HVV HAFAS API](https://github.com/public-transport/hafas-client/tree/df943252b69e07a9739600ef409a65e2941cd1c9/p/hvv/readme.md).
 
 [API Documentation](docs/index.md) | [Why?](docs/why.md)
 
