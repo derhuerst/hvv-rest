@@ -2,7 +2,7 @@
 
 [`v5.hvv.transport.rest`](https://v5.hvv.transport.rest/) is a [REST API](https://restfulapi.net). Data is being returned as [JSON](https://www.json.org/).
 
-You can just use the API without authentication. In the future, we may [rate-limit](https://apisyouwonthate.com/blog/what-is-api-rate-limiting-all-about) your IP address if you make too many requests.
+You can just use the API without authentication. There's a [rate limit](https://apisyouwonthate.com/blog/what-is-api-rate-limiting-all-about) of 100 request/minute (burst 200 requests/minute) set up.
 
 *Note:* For [URL-encoding](https://de.wikipedia.org/wiki/URL-Encoding), this documentation uses the `url-encode` tool of the [`url-decode-encode-cli` package](https://www.npmjs.com/package/url-decode-encode-cli).
 
@@ -11,16 +11,17 @@ You can just use the API without authentication. In the future, we may [rate-lim
 
 *Note:* These routes only wrap [`hafas-client@5` methods](https://github.com/public-transport/hafas-client/blob/5/docs/readme.md), check their docs for more details.
 
-- [`GET /locations`](#get-locations)
+
 - [`GET /stops/nearby`](#get-stopsnearby)
 - [`GET /stops/reachable-from`](#get-stopsreachable-from)
 - [`GET /stops/:id`](#get-stopsid)
 - [`GET /stops/:id/departures`](#get-stopsiddepartures)
 - [`GET /stops/:id/arrivals`](#get-stopsidarrivals)
 - [`GET /journeys`](#get-journeys)
-- [`GET /journeys/:ref`](#get-journeysref)
 - [`GET /trips/:id`](#get-tripsid)
+- [`GET /locations`](#get-locations)
 - [`GET /radar`](#get-radar)
+- [`GET /journeys/:ref`](#get-journeysref)
 - [date/time parameters](#datetime-parameters)
 
 
@@ -303,7 +304,7 @@ parameter | description | type | default value
 `when` | Date & time to get departures for. See [date/time parameters](#datetime-parameters). | date+time | *now*
 `direction` | Filter departures by direction. | string |  
 `duration` | Show departures for how many minutes? | number | `10`
-`results` | Max. number of departures. | number | *whatever HAFAS wants
+`results` | Max. number of departures. | number | *whatever HAFAS wants*
 `linesOfStops` | Parse & return lines of each stop/station? | boolean | `false`
 `remarks` | Parse & return hints & warnings? | boolean | `true`
 `language` | Language of the results. | string | `en`

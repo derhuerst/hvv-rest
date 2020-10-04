@@ -2,10 +2,11 @@
 
 ***hvv-rest* is a public transport REST API**, a clean alternative to the [HVV HAFAS API](https://github.com/public-transport/hafas-client/blob/e02a20b1de59bda3cd380445b6105e4c46036636/p/hvv/readme.md). It is deployed at [`v5.hvv.transport.rest`](https://v5.hvv.transport.rest/).
 
-[**documentation**](docs/readme.md)
+[**API documentation**](docs/readme.md)
 
 ![hvv-rest architecture diagram](architecture.svg)
 
+[![API status](https://badgen.net/uptime-robot/status/m784879519-27e5d1cc383d9159da575595)](https://stats.uptimerobot.com/57wNLs39M/784879519)
 [![Docker build status](https://img.shields.io/docker/build/derhuerst/hvv-rest.svg)](https://hub.docker.com/r/derhuerst/hvv-rest/)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/hvv-rest.svg)
 [![chat with me on Gitter](https://img.shields.io/badge/chat%20with%20me-on%20gitter-512e92.svg)](https://gitter.im/derhuerst)
