@@ -15,7 +15,7 @@ const docsRoot = pathJoin(__dirname, 'docs')
 
 const hamburgHarburg = '3204'
 
-let hafas = createHafas(hvvProfile, 'hvv-rest')
+let hafas = createHafas(hvvProfile, pkg.name)
 let healthCheck = createHealthCheck(hafas, hamburgHarburg)
 
 if (process.env.REDIS_URL) {
